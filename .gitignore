@@ -1,5 +1,35 @@
-# Ignore Python cache
+# Python cache
 __pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.py[cod]
+*$py.class
 
-# Ignore raw data
-data/raw/
+# Environment
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Config files with sensitive data
+config/config.json
+config/*.yaml
+
+# Data files
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+
+# Logs
+*.log
+logs/
+
+# IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
