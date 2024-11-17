@@ -2,3 +2,5 @@ requests
 beautifulsoup4
 pandas
 matplotlib
+requests==2.31.0
+pandas==2.1.0

@@ -1,8 +1,14 @@
 {
-    "urls": [
-      "https://competitor1.com",
-      "https://competitor2.com"
-    ],
-    "output_file": "data/processed/competitor_data.csv"
-  }
-  
+  "keywords": [
+      "sri lanka tours",
+      "sri lanka holiday packages",
+      "sri lanka travel agent"
+      
+  ],
+  "competitor_domains": [
+      "jetwingtravels.com",
+      "travelco.lk",
+      "classictravel.lk",
+      "ceylinetravels.lk"
+  ]
+}
