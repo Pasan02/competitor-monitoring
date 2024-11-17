@@ -3,58 +3,63 @@ import json
 import requests
 import csv
 
-# Load configuration based on environment
-if os.getenv("GITHUB_ACTIONS"):
-    # Running in GitHub Actions
-    config = {
-        "API_KEY": os.getenv("GOOGLE_API_KEY"),
-        "SEARCH_ENGINE_ID": os.getenv("GOOGLE_CSE_ID"),
-    }
-else:
-    # Running locally, load from config.json
-    with open("config.json", "r") as file:
-        config = json.load(file)
+def fetch_search_results(api_key, search_engine_id, query, num_results=20):
+    """Fetch search results from the Google Custom Search JSON API."""
+    search_results = []
+    start = 1
+    while len(search_results) < num_results:
+        url = (
+            f"https://www.googleapis.com/customsearch/v1?"
+            f"key={api_key}&cx={search_engine_id}&q={query}&start={start}"
+        )
+        response = requests.get(url)
+        data = response.json()
+        if "items" not in data:
+            break
+        search_results.extend(data["items"])
+        start += 10
+        if len(data["items"]) < 10:
+            break
+    return search_results[:num_results]
 
-API_KEY = config["API_KEY"]
-SEARCH_ENGINE_ID = config["SEARCH_ENGINE_ID"]
-KEYWORDS = ["Sri Lanka travel packages", "Maldives tour deals", "best travel agents Sri Lanka"]
 
-# Limit the results to the first 20
-NUM_RESULTS = 20
-
-# Function to perform the Google search
-def search_google(query):
-    url = f"https://www.googleapis.com/customsearch/v1"
-    params = {
-        "key": API_KEY,
-        "cx": SEARCH_ENGINE_ID,
-        "q": query,
-        "num": NUM_RESULTS,
-    }
-    response = requests.get(url, params=params)
-    response.raise_for_status()
-    return response.json()
-
-# Function to save results to a CSV
-def save_to_csv(results, filename="google_rankings.csv"):
+def save_results_to_csv(results, filename="google_rankings.csv"):
+    """Save search results to a CSV file."""
     with open(filename, mode="w", newline="", encoding="utf-8") as file:
         writer = csv.writer(file)
-        writer.writerow(["Keyword", "Title", "Link", "Snippet"])
-        for result in results:
-            writer.writerow([result["keyword"], result["title"], result["link"], result["snippet"]])
+        writer.writerow(["Rank", "Title", "Snippet", "Link"])
+        for index, item in enumerate(results, start=1):
+            writer.writerow([index, item["title"], item["snippet"], item["link"]])
 
-# Main script execution
-if __name__ == "__main__":
-    all_results = []
-    for keyword in KEYWORDS:
-        print(f"Searching for keyword: {keyword}")
-        search_results = search_google(keyword)
-        for item in search_results.get("items", []):
-            all_results.append({
-                "keyword": keyword,
-                "title": item.get("title"),
-                "link": item.get("link"),
-                "snippet": item.get("snippet", ""),
-            })
-    save_to_csv(all_results)
-    print(f"Results saved to google_rankings.csv")
+
+# Detect environment
+is_github = os.getenv("GITHUB_ACTIONS") == "true"
+
+if not is_github:
+    # Load from the local config file during local execution
+    config_path = "config/config.json"
+    with open(config_path, "r") as file:
+        config = json.load(file)
+    API_KEY = config["API_KEY"]
+    SEARCH_ENGINE_ID = config["SEARCH_ENGINE_ID"]
+else:
+    # Use environment variables when running on GitHub Actions
+    API_KEY = os.getenv("GOOGLE_API_KEY")
+    SEARCH_ENGINE_ID = os.getenv("GOOGLE_CSE_ID")
+
+# Define keywords to track
+keywords = [
+    "Sri Lanka holiday packages",
+    "Maldives travel packages",
+    "affordable Sri Lanka tours",
+    "luxury travel Maldives",
+    "Sri Lanka travel deals",
+]
+
+# Fetch and save search results
+for keyword in keywords:
+    print(f"Fetching results for: {keyword}")
+    results = fetch_search_results(API_KEY, SEARCH_ENGINE_ID, keyword)
+    save_results_to_csv(results, filename=f"results_{keyword.replace(' ', '_')}.csv")
+
+print("Search results saved.")
