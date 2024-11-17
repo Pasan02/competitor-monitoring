@@ -1,35 +1,17 @@
-# Python cache
+# Ignore config file with sensitive API keys (used locally)
+config.json
+
+# Ignore Python cache files
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
-.Python
 *.py[cod]
-*$py.class
 
-# Environment
-.env
-.venv
-env/
+# Ignore virtual environment folder (if you create one locally)
 venv/
-ENV/
 
-# Config files with sensitive data
-config/config.json
-config/*.yaml
+# Ignore system-specific files
+.DS_Store
+Thumbs.db
 
-# Data files
-data/raw/*
-!data/raw/.gitkeep
-data/processed/*
-!data/processed/.gitkeep
-
-# Logs
-*.log
-logs/
-
-# IDE specific files
-.idea/
-.vscode/
-*.swp
-*.swo
+# Ignore output files
+*.csv
+google_rankings.csv
