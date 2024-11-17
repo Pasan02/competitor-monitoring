@@ -1,10 +1,14 @@
 import requests
 import csv
 import time
+import json
 
-# API key and Search Engine ID
-API_KEY = "AIzaSyDGZROiIUs0x7CaDmihgcI7R9NyTmL0aMw"
-SEARCH_ENGINE_ID = "e7544dfd2df7748cd"
+# Load configuration from config.json
+with open('config.json') as config_file:
+    config = json.load(config_file)
+
+API_KEY = config['API_KEY']
+SEARCH_ENGINE_ID = config['SEARCH_ENGINE_ID']
 
 def fetch_google_results(keyword, max_results=20):
     url = f"https://www.googleapis.com/customsearch/v1"
