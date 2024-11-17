@@ -1,4 +1,6 @@
 # Ignore config file with sensitive API keys (used locally)
+config/
+
 config.json
 
 # Ignore Python cache files
